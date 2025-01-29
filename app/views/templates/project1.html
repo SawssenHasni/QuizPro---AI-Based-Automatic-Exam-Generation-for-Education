@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Professional question generator tool for educators and content creators">
+        <title>Professional Question Generator</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style_project1.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <main class="container">
+        <header class="header">
+            <h1>Question Generator</h1>
+            <p>Transform your content into engaging questions using AI technology</p>
+        </header>
+
+        <form class="form" id="questionForm" method="POST" action="{{ url_for('quiz.project1') }}">
+            <div class="form-group">
+                <label for="paragraph">Enter your text:</label>
+                <textarea 
+                    name="paragraph" 
+                    id="paragraph" 
+                    required 
+                    placeholder="Paste your text here to generate questions..."
+                    aria-describedby="paragraphHelp">{{ paragraph if paragraph else '' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="num_questions">Number of questions:</label>
+                <select name="num_questions" id="num_questions" required>
+                    {% for i in range(1, 11) %}
+                        <option value="{{ i }}" {% if num_questions == i %}selected{% endif %}>
+                            {{ i }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="button button-primary">
+                    <i class="fas fa-magic"></i>
+                    Generate Questions
+                </button>
+                <a href="{{ url_for('quiz.project2') }}" class="button button-secondary">
+                    <i class="fas fa-arrow-right"></i>
+                    Back to Exam Generator
+                </a>
+            </div>
+        </form>
+
+        {% if questions %}
+        <section class="questions-container">
+            <div class="questions-header">
+                <h2>Generated Questions</h2>
+                <p>Here are your AI-generated questions based on the provided text:</p>
+            </div>
+            
+            {% for question in questions %}
+            <article class="question-box">
+                <div class="question-header">
+                    <span class="question-number">Question {{ loop.index }}</span>
+                    <button class="button button-primary" onclick="copyQuestion(this)" data-question="{{ question }}">
+                        <i class="fas fa-copy"></i>
+                        Copy
+                    </button>
+                </div>
+                <p>{{ question }}</p>
+            </article>
+            {% endfor %}
+        </section>
+        {% endif %}
+    </main>
+
+    <footer class="footer">
+        <p>© 2024 QuizPro. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('questionForm');
+            const generateBtn = document.getElementById('generateBtn');
+            const loadingIcon = document.querySelector('.loading');
+            const textarea = document.getElementById('paragraph');
+
+            form.addEventListener('submit', (e) => {
+                generateBtn.disabled = true;
+                loadingIcon.style.display = 'block';
+            });
+
+            // Textarea auto-resize
+            function autoResize() {
+                textarea.style.height = 'auto';
+                textarea.style.height = textarea.scrollHeight + 'px';
+            }
+
+            textarea.addEventListener('input', autoResize);
+
+            // Character count with debounce
+            let timeout;
+            textarea.addEventListener('input', () => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    const charCount = textarea.value.length;
+                    if (charCount > 5000) {
+                        textarea.value = textarea.value.substring(0, 5000);
+                        alert('Maximum character limit is 5000');
+                    }
+                }, 500);
+            });
+
+            // Initial resize
+            autoResize();
+        });
+
+        async function copyQuestion(button) {
+            const question = button.getAttribute('data-question');
+            
+            try {
+                await navigator.clipboard.writeText(question);
+                
+                // Feedback visuel
+                const originalContent = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                button.classList.add('button-success');
+                
+                // Rétablir le bouton après 2 secondes
+                setTimeout(() => {
+                    button.innerHTML = originalContent;
+                    button.classList.remove('button-success');
+                }, 2000);
+                
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy text. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

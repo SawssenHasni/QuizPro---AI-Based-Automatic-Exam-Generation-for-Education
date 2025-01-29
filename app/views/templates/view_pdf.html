@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Generated Quiz - QuizPro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_project2.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="action-buttons">
+        <a href="{{ url_for('quiz.download_pdf') }}" class="button download-btn">
+            <i class="fas fa-download"></i> Download PDF
+        </a>
+        <a href="{{ url_for('quiz.project2') }}" class="button new-quiz-btn">
+            <i class="fas fa-plus"></i> New Exam
+        </a>
+    </div>
+
+    <div class="pdf-container">
+        <iframe src="{{ url_for('quiz.display_pdf') }}" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+
+    <div id="pdf-error" class="pdf-error" style="display: none;">
+        <p>Unable to display PDF. Please try downloading it instead.</p>
+    </div>
+
+    <script>
+        document.querySelector('iframe').addEventListener('error', function() {
+            document.getElementById('pdf-error').style.display = 'block';
+            this.style.display = 'none';
+        });
+    </script>
+</body>
+</html> 

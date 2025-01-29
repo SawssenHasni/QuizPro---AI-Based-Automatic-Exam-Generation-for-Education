@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - QuizPro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_admin.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="page-wrapper">
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">Q</div>
+                <span class="logo-text">QuizPro</span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('admin.stats') }}" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Users Management</span>
+                </a>
+                <a href="{{ url_for('admin.settings') }}" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                <div class="nav-separator"></div>
+                <a href="{{ url_for('quiz.dashboard') }}" class="nav-item">
+                    <i class="fas fa-house"></i>
+                    <span>Return Home</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="header-section">
+                <div class="header-content">
+                    <h1>Users Management</h1>
+                    <p>Manage and monitor user accounts</p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" 
+                               id="searchInput" 
+                               placeholder="Search users..." 
+                               value="{{ search_term }}"
+                               oninput="searchUsers(this.value)">
+                        <div id="searchMessage" class="search-message"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="card table-card">
+                <div class="card-header">
+                    <h2>Recent Users</h2>
+                    <div class="card-actions">
+                        <button class="button button-outline" onclick="exportUsers()">
+                            <i class="fas fa-download"></i>
+                            Export Users
+                        </button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Last Login</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            {% for user in users %}
+                            <tr>
+                                <td class="user-cell">
+                                    <div class="user-avatar">{{ user.username[0].upper() }}</div>
+                                    <div class="user-info">
+                                        <div class="username">{{ user.username }}</div>
+                                        <div class="user-date">
+                                            {% if user.created_at and user.created_at != 'N/A' %}
+                                                Joined {{ user.created_at|format_datetime('%d %b %Y') }}
+                                            {% else %}
+                                                Join date unknown
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ user.email }}</td>
+                                <td><span class="badge badge-{{ user.role }}">{{ user.role|title }}</span></td>
+                                <td><span class="badge badge-{{ user.status }}">{{ user.status|title }}</span></td>
+                                <td>{{ user.last_login|default('Never', true)|format_datetime }}</td>
+                                <td>
+                                    <div class="actions">
+                                        <a href="{{ url_for('admin.user_details', username=user.username) }}" 
+                                           class="button button-icon" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        {% if user.username != 'admin' %}
+                                        <button onclick="toggleUserStatus('{{ user.username }}', '{{ user.status }}')" 
+                                                class="button button-icon" 
+                                                title="{{ 'Deactivate' if user.status == 'active' else 'Activate' }} User">
+                                            <i class="fas fa-{{ 'ban' if user.status == 'active' else 'check' }}"></i>
+                                        </button>
+                                        <button onclick="deleteUser('{{ user.username }}')" 
+                                                class="button button-icon button-danger" 
+                                                title="Delete User">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function toggleUserStatus(username, currentStatus) {
+            const action = currentStatus === 'active' ? 'deactivate' : 'activate';
+            
+            // Custom confirmation dialog
+            const confirmDialog = `
+                <div class="custom-dialog">
+                    <div class="dialog-content">
+                        <h3>Confirm User Status Change</h3>
+                        <p>Are you sure you want to ${action} user "${username}"?</p>
+                        <div class="dialog-actions">
+                            <button onclick="confirmToggleStatus('${username}', '${currentStatus}')" class="button button-primary">Confirm</button>
+                            <button onclick="closeDialog()" class="button button-secondary">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Append dialog to body
+            const dialogContainer = document.createElement('div');
+            dialogContainer.id = 'confirmDialog';
+            dialogContainer.innerHTML = confirmDialog;
+            document.body.appendChild(dialogContainer);
+        }
+
+        async function confirmToggleStatus(username, currentStatus) {
+            // Remove the dialog first
+            closeDialog();
+
+            try {
+                const response = await fetch(`/admin/toggle_user_status/${username}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (response.redirected) {
+                    window.location.href = response.url;
+                    return;
+                }
+                
+                let data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    throw new Error('Invalid server response');
+                }
+                
+                if (response.ok) {
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    throw new Error(data.message || `Error ${action}ing user`);
+                }
+            } catch (error) {
+                alert(`Error: ` + error.message);
+                if (error.message.includes('authentication')) {
+                    window.location.href = '/login';
+                }
+            }
+        }
+
+        async function deleteUser(username) {
+            // Custom confirmation dialog
+            const confirmDialog = `
+                <div class="custom-dialog">
+                    <div class="dialog-content">
+                        <h3>Confirm User Deletion</h3>
+                        <p>Are you sure you want to permanently delete user "${username}"?</p>
+                        <div class="dialog-actions">
+                            <button onclick="confirmDeleteUser('${username}')" class="button button-danger">Delete</button>
+                            <button onclick="closeDialog()" class="button button-secondary">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Append dialog to body
+            const dialogContainer = document.createElement('div');
+            dialogContainer.id = 'confirmDialog';
+            dialogContainer.innerHTML = confirmDialog;
+            document.body.appendChild(dialogContainer);
+        }
+
+        async function confirmDeleteUser(username) {
+            // Remove the dialog first
+            closeDialog();
+
+            try {
+                const response = await fetch(`/admin/delete_user/${username}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (response.redirected) {
+                    window.location.href = response.url;
+                    return;
+                }
+                
+                let data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    throw new Error('Invalid server response');
+                }
+                
+                if (response.ok) {
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    throw new Error(data.message || 'Error deleting user');
+                }
+            } catch (error) {
+                alert(`Error: ` + error.message);
+                if (error.message.includes('authentication')) {
+                    window.location.href = '/login';
+                }
+            }
+        }
+
+        function closeDialog() {
+            const dialog = document.getElementById('confirmDialog');
+            if (dialog) {
+                dialog.remove();
+            }
+        }
+
+        // Add styles for the custom dialog
+        const dialogStyle = document.createElement('style');
+        dialogStyle.textContent = `
+            .custom-dialog {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+            .dialog-content {
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                text-align: center;
+                max-width: 400px;
+                width: 90%;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            .dialog-actions {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                margin-top: 20px;
+            }
+        `;
+        document.head.appendChild(dialogStyle);
+    </script>
+
+    <div id="flash-messages" class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <script>
+        async function searchUsers(query) {
+            const tbody = document.getElementById('usersTableBody');
+            const searchMessage = document.getElementById('searchMessage');
+            
+            try {
+                // Si la requête est vide, recharger tous les utilisateurs
+                if (!query.trim()) {
+                    window.location.reload();
+                    return;
+                }
+
+                const response = await fetch(`/admin/search_users?q=${encodeURIComponent(query)}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Search request failed');
+                }
+
+                const data = await response.json();
+                
+                tbody.innerHTML = ''; // Vider le tableau
+                
+                if (!data.users || data.users.length === 0) {
+                    searchMessage.textContent = 'No users found';
+                    searchMessage.style.display = 'block';
+                    return;
+                }
+                
+                searchMessage.style.display = 'none';
+                
+                data.users.forEach(user => {
+                    const createdAt = user.created_at ? formatDate(user.created_at) : 'Unknown';
+                    const lastLogin = user.last_login ? formatDate(user.last_login) : 'Never';
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="user-cell">
+                                <div class="user-avatar">${user.username[0].toUpperCase()}</div>
+                                <div class="user-info">
+                                    <div class="username">${user.username}</div>
+                                    <div class="user-date">Joined ${createdAt}</div>
+                                </div>
+                            </td>
+                            <td>${user.email}</td>
+                            <td><span class="badge badge-${user.role}">${user.role}</span></td>
+                            <td><span class="badge badge-${user.status}">${user.status}</span></td>
+                            <td>${lastLogin}</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="/admin/user/${user.username}" 
+                                       class="button button-icon" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    ${user.username !== 'admin' ? `
+                                        <button onclick="toggleUserStatus('${user.username}')" 
+                                                class="button button-icon" 
+                                                title="${user.status === 'active' ? 'Deactivate' : 'Activate'} User">
+                                            <i class="fas fa-${user.status === 'active' ? 'ban' : 'check'}"></i>
+                                        </button>
+                                        <button onclick="deleteUser('${user.username}')" 
+                                                class="button button-icon button-danger" 
+                                                title="Delete User">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error searching users:', error);
+                searchMessage.textContent = 'Error searching users';
+                searchMessage.style.display = 'block';
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString || dateString === 'N/A') return 'N/A';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        // Gestionnaire d'événements pour la recherche
+        const searchInput = document.getElementById('searchInput');
+        let searchTimeout;
+
+        searchInput.addEventListener('input', (e) => {
+            const searchMessage = document.getElementById('searchMessage');
+            clearTimeout(searchTimeout);
+            
+            if (!e.target.value.trim()) {
+                searchMessage.style.display = 'none';
+                window.location.reload();
+                return;
+            }
+            
+            searchTimeout = setTimeout(() => {
+                searchUsers(e.target.value);
+            }, 300);
+        });
+
+        async function exportUsers() {
+            const exportBtn = document.querySelector('.button-outline');
+            const originalContent = exportBtn.innerHTML;
+            
+            try {
+                // Afficher l'indicateur de chargement
+                exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Exporting...';
+                exportBtn.disabled = true;
+
+                const response = await fetch('/admin/export_users', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'text/csv'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Export failed');
+                }
+
+                // Obtenir le nom du fichier depuis les headers
+                const contentDisposition = response.headers.get('content-disposition');
+                let filename = 'users_export.csv';
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename=(.+)/);
+                    if (match) {
+                        filename = match[1];
+                    }
+                }
+
+                // Télécharger le fichier
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = filename;
+
+                document.body.appendChild(a);
+                a.click();
+
+                // Nettoyer
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                // Restaurer le bouton
+                exportBtn.innerHTML = originalContent;
+                exportBtn.disabled = false;
+
+            } catch (error) {
+                console.error('Error exporting users:', error);
+                alert('Error exporting users. Please try again.');
+                
+                // Restaurer le bouton en cas d'erreur
+                exportBtn.innerHTML = originalContent;
+                exportBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

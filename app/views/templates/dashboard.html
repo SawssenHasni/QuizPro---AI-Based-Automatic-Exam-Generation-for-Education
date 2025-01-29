@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Question Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="header">
+            <div class="header-content">
+                <div class="user-avatar">
+                    {{ username[0] }}
+                </div>
+                <h1>Welcome, {{ username }}!</h1>
+            </div>
+            <div class="header-actions">
+                <a href="{{ url_for('user.profile') }}" class="profile-btn">
+                    <i class="fas fa-user"></i>
+                    Profile
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+
+        <div class="main-container">
+            <div class="stats-grid">
+                <div class="stat-card questions">
+                    <div class="stat-content">
+                        <div class="stat-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-title">Questions Generated</div>
+                            <div class="stat-value">
+                                {{ stats.questions_generated if stats and stats.questions_generated else 0 }}
+                            </div>
+                            <div class="stat-subtitle">
+                                AI-powered questions created
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card exams">
+                    <div class="stat-content">
+                        <div class="stat-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-title">Exams Created</div>
+                            <div class="stat-value">
+                                {{ stats.exams_generated if stats and stats.exams_generated else 0 }}
+                            </div>
+                            <div class="stat-subtitle">
+                                Complete assessments generated
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-grid">
+                <div class="project-card">
+                    <div class="project-icon">Q</div>
+                    <h2>Question Generator</h2>
+                    <p>Easily create relevant questions from your texts and documents. Our smart algorithm analyzes content and generates questions tailored to your needs.</p>
+                    <a href="{{ url_for('quiz.project1') }}" class="project-button">
+                        Access Generator
+                    </a>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-icon">E</div>
+                    <h2>Exam Generator</h2>
+                    <p>Transform your PDFs into structured exams with our automated generation tool. Customize format and difficulty level according to your requirements.</p>
+                    <a href="{{ url_for('quiz.project2') }}" class="project-button">
+                        Create Exam
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

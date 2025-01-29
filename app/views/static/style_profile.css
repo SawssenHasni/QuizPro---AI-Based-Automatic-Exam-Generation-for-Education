@@ -1,0 +1,522 @@
+.profile-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    display: grid;
+    gap: 1.5rem;
+}
+
+.profile-header {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 2.5rem;
+    padding: 2rem;
+    background: linear-gradient(to right, var(--card-bg), var(--secondary));
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-avatar-wrapper {
+    flex-shrink: 0;
+    position: relative;
+}
+
+.profile-avatar-container {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--secondary);
+    position: relative;
+    border: 3px solid var(--primary);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-avatar-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+    backdrop-filter: blur(2px);
+    border-radius: 50%;
+}
+
+.profile-avatar-overlay:hover {
+    opacity: 1;
+}
+
+.profile-info {
+    flex-grow: 1;
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.profile-email {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.profile-content {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 2rem;
+    align-items: start;
+}
+
+.profile-tabs {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--secondary);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: transparent;
+    color: var(--text-light);
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tab-btn.active {
+    background: white;
+    color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+.form-section {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.form-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+}
+
+.input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid var(--secondary);
+    border-radius: 10px;
+    background: var(--secondary);
+    transition: all 0.3s ease;
+}
+
+.input:focus {
+    background: white;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.profile-sidebar {
+    position: sticky;
+    top: 2rem;
+    display: grid;
+    gap: 1.5rem;
+}
+
+.quick-actions {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.quick-actions h3 {
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--secondary);
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: var(--secondary);
+    color: var(--text-primary);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.action-button:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.action-button i {
+    font-size: 1.2rem;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-button span {
+    flex-grow: 1;
+    margin-left: 1rem;
+    font-weight: 500;
+}
+
+.action-button:hover i {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+.action-button:nth-child(1) {
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    color: white;
+}
+
+.action-button:nth-child(2) {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white;
+}
+
+.action-button:nth-child(3) {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    color: white;
+}
+
+.action-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+}
+
+.action-button:hover::before {
+    transform: translateX(100%);
+}
+
+@media (max-width: 1200px) {
+    .profile-content {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-sidebar {
+        position: static;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-header {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 1.5rem;
+    }
+
+    .profile-avatar-wrapper {
+        justify-self: center;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-groups-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Styles pour la section dashboard */
+.go-to-dashboard {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--secondary);
+}
+
+.dashboard-card {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-content {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.dashboard-icon {
+    font-size: 2.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(4px);
+}
+
+.dashboard-text h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-text p {
+    opacity: 0.9;
+    font-size: 1rem;
+}
+
+.dashboard-button {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.dashboard-button:hover {
+    background: white;
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .dashboard-content {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+}
+
+.page-title {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--card-bg) 0%, var(--secondary) 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.page-title h1 {
+    color: var(--primary);
+    font-size: 2.2rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.page-title p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.profile-badges {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.badge-role {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+}
+
+.badge-status {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white;
+}
+
+.badge-plan {
+    background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+    color: white;
+}
+
+/* Style pour la bannière de bienvenue */
+.welcome-banner {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-banner h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.welcome-banner p {
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+/* Style pour les avatars circulaires */
+.avatar-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #f0f0f0;
+}
+
+/* Style pour le conteneur de l'avatar */
+.avatar-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+/* Style pour l'overlay au survol */
+.avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.avatar-container:hover .avatar-overlay {
+    opacity: 1;
+}
+
+.avatar-overlay i {
+    color: white;
+    font-size: 1.5rem;
+}
+
+/* Style pour la version miniature de l'avatar (par exemple dans la navbar) */
+.avatar-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+} 

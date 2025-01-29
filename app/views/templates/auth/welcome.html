@@ -1,0 +1,212 @@
+{% extends "project_base.html" %}
+
+{% block title %}Welcome to QuizPro{% endblock %}
+
+{% block additional_css %}
+<style>
+    .welcome-container {
+        max-width: 900px;
+        margin: 4rem auto;
+        padding: 2rem;
+    }
+
+    .welcome-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+
+    .welcome-header::after {
+        content: '';
+        position: absolute;
+        bottom: -1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: var(--accent);
+        border-radius: var(--radius-full);
+    }
+
+    .welcome-header h1 {
+        font-size: 3rem;
+        background: var(--accent);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+    }
+
+    .welcome-header p {
+        color: var(--text-light);
+        font-size: 1.2rem;
+    }
+
+    .welcome-options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .welcome-card {
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        text-align: center;
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        color: var(--text);
+        position: relative;
+        overflow: hidden;
+        border: 2px solid transparent;
+    }
+
+    .welcome-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .welcome-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary-light);
+    }
+
+    .welcome-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .welcome-card i {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        background: var(--accent);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+    }
+
+    .welcome-card h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+    }
+
+    .welcome-card p {
+        color: var(--text-light);
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-footer {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--secondary);
+    }
+
+    .card-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--secondary);
+        color: var(--text);
+        border-radius: var(--radius-full);
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .welcome-card:hover .card-button {
+        background: var(--primary);
+        color: white;
+    }
+
+    .welcome-footer {
+        text-align: center;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--secondary);
+        color: var(--text-light);
+    }
+
+    .welcome-footer p {
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+        .welcome-options {
+            grid-template-columns: 1fr;
+        }
+
+        .welcome-header h1 {
+            font-size: 2rem;
+        }
+
+        .welcome-card {
+            padding: 2rem;
+        }
+    }
+
+    .welcome-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: var(--primary-light);
+        color: white;
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        margin-bottom: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="welcome-container">
+    <div class="welcome-header">
+        <div class="welcome-badge">
+            <i class="fas fa-check-circle"></i>
+            Registration Successful
+        </div>
+        <h1>Welcome to QuizPro, {{ username }}!</h1>
+        <p>Choose your next step to get started</p>
+    </div>
+
+    <div class="welcome-options">
+        <a href="{{ url_for('user.profile') }}" class="welcome-card">
+            <i class="fas fa-user-edit"></i>
+            <h2>Complete Your Profile</h2>
+            <p>Personalize your experience by setting up your preferences, notification settings, and display name.</p>
+            <div class="card-footer">
+                <span class="card-button">
+                    Setup Profile <i class="fas fa-arrow-right"></i>
+                </span>
+            </div>
+        </a>
+
+        <a href="{{ url_for('quiz.dashboard') }}" class="welcome-card">
+            <i class="fas fa-rocket"></i>
+            <h2>Go to Dashboard</h2>
+            <p>Jump right into QuizPro and start generating questions and creating exams. You can set up your profile later.</p>
+            <div class="card-footer">
+                <span class="card-button">
+                    Get Started <i class="fas fa-arrow-right"></i>
+                </span>
+            </div>
+        </a>
+    </div>
+
+    <div class="welcome-footer">
+        <p>Don't worry! You can always update your profile later from the menu</p>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,237 @@
+{% extends "project_base.html" %}
+
+{% block title %}Notifications - {{ session.username }}{% endblock %}
+
+{% block additional_css %}
+<style>
+    .notifications-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .notifications-header {
+        margin-bottom: 2rem;
+    }
+
+    .notifications-header h1 {
+        font-size: 2rem;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .notifications-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .notification-card {
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-md);
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .notification-card:not(.read) {
+        border-left: 4px solid var(--primary);
+    }
+
+    .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-md);
+        background: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .notification-content {
+        flex-grow: 1;
+    }
+
+    .notification-message {
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .notification-timestamp {
+        color: var(--text-light);
+        font-size: 0.75rem;
+    }
+
+    .notification-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .mark-read-button {
+        background: none;
+        border: none;
+        color: var(--primary);
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: var(--radius-sm);
+        transition: all 0.2s ease;
+    }
+
+    .mark-read-button:hover {
+        background: var(--primary-light);
+        color: white;
+    }
+
+    .notification-icon.info {
+        background: var(--primary);
+    }
+
+    .notification-icon.success {
+        background: var(--success);
+    }
+
+    .notification-icon.warning {
+        background: var(--warning);
+    }
+
+    .notification-icon.error {
+        background: var(--danger);
+    }
+
+    .no-notifications {
+        text-align: center;
+        padding: 3rem;
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        color: var(--text-light);
+    }
+
+    .notifications-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 1rem;
+    }
+
+    .mark-all-read {
+        background: var(--secondary);
+        color: var(--text);
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-md);
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .mark-all-read:hover {
+        background: var(--primary);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="notifications-container">
+    <div class="notifications-header">
+        <h1>Notifications</h1>
+        <p>Stay updated with your latest activities and alerts</p>
+    </div>
+
+    {% if notifications %}
+        <div class="notifications-actions">
+            <button class="mark-all-read">
+                <i class="fas fa-check-double"></i>
+                Mark all as read
+            </button>
+        </div>
+
+        <div class="notifications-list">
+            {% for notification in notifications %}
+                <div class="notification-card {% if not notification.read %}not-read{% endif %}" 
+                     data-id="{{ notification._id }}">
+                    <div class="notification-icon {{ notification.type }}">
+                        {% if notification.type == 'info' %}
+                            <i class="fas fa-info"></i>
+                        {% elif notification.type == 'success' %}
+                            <i class="fas fa-check"></i>
+                        {% elif notification.type == 'warning' %}
+                            <i class="fas fa-exclamation"></i>
+                        {% elif notification.type == 'error' %}
+                            <i class="fas fa-times"></i>
+                        {% endif %}
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-message">
+                            {{ notification.message }}
+                        </div>
+                        <div class="notification-timestamp">
+                            {{ notification.timestamp|format_datetime }}
+                        </div>
+                    </div>
+                    {% if not notification.read %}
+                        <div class="notification-actions">
+                            <button class="mark-read-button" onclick="markAsRead('{{ notification._id }}')">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-notifications">
+            <i class="fas fa-bell-slash fa-3x mb-3"></i>
+            <h3>No Notifications</h3>
+            <p>You're all caught up!</p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+async function markAsRead(notificationId) {
+    try {
+        const response = await fetch(`/user/notifications/mark-read/${notificationId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        if (response.ok) {
+            const card = document.querySelector(`[data-id="${notificationId}"]`);
+            card.classList.remove('not-read');
+            const actionButton = card.querySelector('.notification-actions');
+            if (actionButton) {
+                actionButton.remove();
+            }
+            
+            // Mettre à jour le compteur de notifications
+            const badge = document.querySelector('.notifications-badge');
+            if (badge) {
+                const currentCount = parseInt(badge.textContent);
+                if (currentCount > 1) {
+                    badge.textContent = currentCount - 1;
+                } else {
+                    badge.remove();
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error marking notification as read:', error);
+    }
+}
+
+document.querySelector('.mark-all-read')?.addEventListener('click', async () => {
+    const unreadNotifications = document.querySelectorAll('.notification-card.not-read');
+    for (const notification of unreadNotifications) {
+        const notificationId = notification.dataset.id;
+        await markAsRead(notificationId);
+    }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,110 @@
+.password-input-container {
+    position: relative;
+    width: 100%;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    color: #64748b;
+    transition: all 0.3s ease;
+}
+
+.toggle-password:hover {
+    color: var(--primary);
+}
+
+.toggle-password:focus {
+    outline: none;
+}
+
+.toggle-password i {
+    font-size: 1.1rem;
+}
+
+/* Animation pour l'icône */
+.toggle-password i {
+    transition: transform 0.3s ease;
+}
+
+.toggle-password:hover i {
+    transform: scale(1.1);
+}
+
+/* Style pour l'input */
+.password-input-container input {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.password-input-container input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    outline: none;
+}
+
+/* Styles pour le formulaire de paiement Stripe */
+#payment-form {
+    width: 100%;
+    margin-top: 20px;
+}
+
+#payment-element {
+    margin-bottom: 24px;
+}
+
+#payment-message {
+    color: rgb(105, 115, 134);
+    font-size: 16px;
+    line-height: 20px;
+    padding-top: 12px;
+    text-align: center;
+}
+
+#payment-element {
+    margin-bottom: 24px;
+}
+
+/* Spinner/Processing state */
+.spinner,
+.spinner:before,
+.spinner:after {
+    border-radius: 50%;
+}
+
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.hidden {
+    display: none;
+}
+
+/* Styles pour le bouton désactivé */
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+ 

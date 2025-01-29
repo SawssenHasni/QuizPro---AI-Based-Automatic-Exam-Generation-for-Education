@@ -1,0 +1,217 @@
+{% extends "project_base.html" %}
+
+{% block title %}Favorites - {{ session.username }}{% endblock %}
+
+{% block additional_css %}
+<style>
+    .favorites-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .favorites-header {
+        margin-bottom: 2rem;
+    }
+
+    .favorites-header h1 {
+        font-size: 2rem;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .favorites-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .favorite-card {
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .favorite-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .favorite-type {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.75rem;
+        background: var(--primary);
+        color: white;
+        border-radius: var(--radius-full);
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+    }
+
+    .favorite-content {
+        color: var(--text);
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .favorite-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--secondary);
+        font-size: 0.875rem;
+        color: var(--text-light);
+    }
+
+    .favorite-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .favorite-button {
+        background: none;
+        border: none;
+        color: var(--text-light);
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: var(--radius-sm);
+        transition: all 0.2s ease;
+    }
+
+    .favorite-button:hover {
+        color: var(--primary);
+        background: var(--secondary);
+    }
+
+    .remove-favorite {
+        color: var(--danger);
+    }
+
+    .remove-favorite:hover {
+        color: white;
+        background: var(--danger);
+    }
+
+    .no-favorites {
+        text-align: center;
+        padding: 3rem;
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        color: var(--text-light);
+    }
+
+    .favorite-timestamp {
+        font-size: 0.75rem;
+        color: var(--text-light);
+    }
+
+    @media (max-width: 768px) {
+        .favorites-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="favorites-container">
+    <div class="favorites-header">
+        <h1>Favorite Questions</h1>
+        <p>Your saved questions and answers</p>
+    </div>
+
+    {% if favorites %}
+        <div class="favorites-grid">
+            {% for favorite in favorites %}
+                <div class="favorite-card" data-id="{{ favorite.question.id }}">
+                    <div class="favorite-type">
+                        <i class="fas fa-tag"></i>
+                        {{ favorite.question.type|default('Question', true)|title }}
+                    </div>
+                    <div class="favorite-content">
+                        {{ favorite.question.content }}
+                    </div>
+                    {% if favorite.question.answer %}
+                        <div class="favorite-answer">
+                            <strong>Answer:</strong> {{ favorite.question.answer }}
+                        </div>
+                    {% endif %}
+                    <div class="favorite-meta">
+                        <div class="favorite-timestamp">
+                            Added {{ favorite.added_at|format_datetime }}
+                        </div>
+                        <div class="favorite-actions">
+                            <button class="favorite-button" onclick="copyQuestion(this)" 
+                                    data-question="{{ favorite.question.content }}">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="favorite-button remove-favorite" 
+                                    onclick="removeFavorite('{{ favorite.question.id }}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-favorites">
+            <i class="fas fa-star fa-3x mb-3"></i>
+            <h3>No Favorites Yet</h3>
+            <p>Questions you favorite will appear here</p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+async function copyQuestion(button) {
+    const question = button.getAttribute('data-question');
+    try {
+        await navigator.clipboard.writeText(question);
+        const originalIcon = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => {
+            button.innerHTML = originalIcon;
+        }, 2000);
+    } catch (err) {
+        console.error('Failed to copy:', err);
+    }
+}
+
+async function removeFavorite(questionId) {
+    if (confirm('Are you sure you want to remove this question from favorites?')) {
+        try {
+            const response = await fetch(`/user/favorites?id=${questionId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            if (response.ok) {
+                const card = document.querySelector(`[data-id="${questionId}"]`);
+                card.style.opacity = '0';
+                setTimeout(() => {
+                    card.remove();
+                    // Vérifier s'il reste des favoris
+                    const remainingCards = document.querySelectorAll('.favorite-card');
+                    if (remainingCards.length === 0) {
+                        location.reload(); // Recharger pour afficher le message "No Favorites"
+                    }
+                }, 300);
+            }
+        } catch (error) {
+            console.error('Error removing favorite:', error);
+        }
+    }
+}
+</script>
+{% endblock %} 

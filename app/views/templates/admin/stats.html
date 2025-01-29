@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Statistics - QuizPro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_admin.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <style>
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+        }
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            box-shadow: var(--shadow-light);
+        }
+        .chart-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+        .chart-card .card-body {
+            height: 300px;
+        }
+        .chart-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        .chart-actions .button {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">Q</div>
+                <span class="logo-text">QuizPro</span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('admin.stats') }}" class="nav-item active">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Users Management</span>
+                </a>
+                <a href="{{ url_for('admin.settings') }}" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                <div class="nav-separator"></div>
+                <a href="{{ url_for('quiz.dashboard') }}" class="nav-item">
+                    <i class="fas fa-house"></i>
+                    <span>Return Home</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="header-section">
+                <div class="header-content">
+                    <h1>Dashboard</h1>
+                    <p>System overview and analytics</p>
+                </div>
+                <div class="header-actions">
+                    <button class="button button-outline" onclick="exportStats()">
+                        <i class="fas fa-download"></i>
+                        Export Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- Overview Stats -->
+            <div class="stats-overview">
+                <div class="stat-card highlight">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Total Users</h3>
+                        <div class="stat-value">{{ stats.total_users }}</div>
+                        <div class="stat-trend {{ 'positive' if stats.get('user_growth', 0) >= 0 else 'negative' }}">
+                            <i class="fas fa-arrow-{{ 'up' if stats.get('user_growth', 0) >= 0 else 'down' }}"></i>
+                            <span>{{ stats.get('user_growth', 0) }}% this month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Active Users</h3>
+                        <div class="stat-value">{{ stats.active_users }}</div>
+                        <div class="stat-trend {{ 'positive' if stats.get('active_growth', 0) >= 0 else 'negative' }}">
+                            <i class="fas fa-arrow-{{ 'up' if stats.get('active_growth', 0) >= 0 else 'down' }}"></i>
+                            <span>{{ stats.get('active_growth', 0) }}% this week</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Total Exams</h3>
+                        <div class="stat-value">{{ stats.total_exams }}</div>
+                        <div class="stat-trend {{ 'positive' if stats.get('exams_growth', 0) >= 0 else 'negative' }}">
+                            <i class="fas fa-arrow-{{ 'up' if stats.get('exams_growth', 0) >= 0 else 'down' }}"></i>
+                            <span>{{ stats.get('exams_growth', 0) }}% this month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Questions Generated</h3>
+                        <div class="stat-value">{{ stats.total_questions }}</div>
+                        <div class="stat-trend {{ 'positive' if stats.get('questions_growth', 0) >= 0 else 'negative' }}">
+                            <i class="fas fa-arrow-{{ 'up' if stats.get('questions_growth', 0) >= 0 else 'down' }}"></i>
+                            <span>{{ stats.get('questions_growth', 0) }}% this month</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="card-header">
+                        <h2>User Activity</h2>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="userActivityChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="card-header">
+                        <h2>Questions Generated</h2>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="questionsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card activity-card">
+                <div class="card-header">
+                    <h2>Recent Activity</h2>
+                </div>
+                <div class="activity-list">
+                    {% for user in stats.recent_users %}
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">New User Registration</div>
+                            <div class="activity-subtitle">{{ user.username }} joined</div>
+                            <div class="activity-time">{{ user.created_at|format_datetime }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userActivityCtx = document.getElementById('userActivityChart').getContext('2d');
+            const questionsCtx = document.getElementById('questionsChart').getContext('2d');
+
+            // User Activity Line Chart
+            new Chart(userActivityCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Active Users',
+                        data: [65, 78, 90, 85, 95, 110],
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Active Users'
+                        },
+                        datalabels: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Users'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Questions Generated Bar Chart
+            new Chart(questionsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Questions Generated',
+                        data: [120, 190, 300, 250, 400, 380],
+                        backgroundColor: '#60a5fa',
+                        borderColor: '#2563eb',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Questions Generation'
+                        },
+                        datalabels: {
+                            color: 'white',
+                            anchor: 'end',
+                            align: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Questions'
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        });
+
+        function exportStats() {
+            // TODO: Implement actual stats export functionality
+            alert('Exporting statistics...');
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,188 @@
+{% extends "project_base.html" %}
+
+{% block title %}Profile - {{ user.username }}{% endblock %}
+
+{% block additional_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style_profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="welcome-banner">
+        <h1><i class="fas fa-user-circle"></i> Welcome to Your Profile</h1>
+        <p>Manage your account settings and preferences</p>
+    </div>
+
+    <div class="profile-header">
+        <div class="profile-avatar-wrapper">
+            <div class="profile-avatar-container">
+                {% if user.avatar_url %}
+                    <img src="{{ user.avatar_url }}" alt="Profile" class="profile-avatar">
+                {% else %}
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                {% endif %}
+                <div class="profile-avatar-overlay" onclick="document.getElementById('avatar-input').click()">
+                    <i class="fas fa-camera"></i>
+                    <span>Change Photo</span>
+                </div>
+            </div>
+            <input type="file" id="avatar-input" hidden accept="image/*" onchange="handleAvatarChange(this)">
+        </div>
+
+        <div class="profile-info">
+            <h1 class="profile-name">{{ user.display_name or user.username }}</h1>
+            <p class="profile-email">{{ user.email }}</p>
+            <div class="profile-badges">
+                <span class="badge badge-role">{{ user.role|title }}</span>
+                <span class="badge badge-status {{ user.status }}">{{ user.status|title }}</span>
+                <span class="badge badge-plan">{{ user.subscription|default('Free', true)|title }} Plan</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-content">
+        <div class="main-content">
+            <div class="profile-tabs">
+                <button class="tab-btn active" data-tab="personal">
+                    <i class="fas fa-user"></i> Personal Info
+                </button>
+                <button class="tab-btn" data-tab="preferences">
+                    <i class="fas fa-cog"></i> Preferences
+                </button>
+                <button class="tab-btn" data-tab="security">
+                    <i class="fas fa-shield-alt"></i> Security
+                </button>
+            </div>
+
+            <form method="POST" class="profile-form" id="profile-form">
+                <div class="tab-content active" id="personal">
+                    <div class="form-section">
+                        <h2>Personal Information</h2>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="email" name="email" value="{{ user.email }}" class="input">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="display_name">Display Name</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user-edit"></i>
+                                <input type="text" id="display_name" name="display_name" value="{{ user.display_name or user.username }}" class="input">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bio">Bio</label>
+                            <textarea id="bio" name="bio" class="input" rows="3">{{ user.bio }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="security">
+                    <div class="form-section">
+                        <h2><i class="fas fa-lock"></i> Change Password</h2>
+                        
+                        <div class="form-group">
+                            <label for="current_password">Current Password</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-key"></i>
+                                <input type="password" id="current_password" name="current_password" class="input">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new_password">New Password</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="new_password" name="new_password" class="input">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm_password">Confirm New Password</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-check-circle"></i>
+                                <input type="password" id="confirm_password" name="confirm_password" class="input">
+                            </div>
+                        </div>
+
+                        <button type="submit" name="action" value="change_password" class="button button-primary">
+                            <i class="fas fa-save"></i> Update Password
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="button button-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button type="reset" class="button button-secondary">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="profile-sidebar">
+            <div class="quick-actions">
+                <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                <div class="action-buttons">
+                    <a href="{{ url_for('quiz.dashboard') }}" class="action-button">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="{{ url_for('user.activities') }}" class="action-button">
+                        <i class="fas fa-history"></i>
+                        <span>Activity History</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="{{ url_for('user.favorites') }}" class="action-button">
+                        <i class="fas fa-star"></i>
+                        <span>Favorites</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        button.classList.add('active');
+        document.getElementById(button.dataset.tab).classList.add('active');
+    });
+});
+
+async function handleAvatarChange(input) {
+    if (input.files && input.files[0]) {
+        const formData = new FormData();
+        formData.append('avatar', input.files[0]);
+
+        try {
+            const response = await fetch('/user/update_avatar', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                location.reload();
+            }
+        } catch (error) {
+            console.error('Error uploading avatar:', error);
+        }
+    }
+}
+</script>
+{% endblock %} 

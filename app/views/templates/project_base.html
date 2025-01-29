@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ current_theme }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}QuizPro{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    {% block additional_css %}{% endblock %}
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="{{ url_for('quiz.dashboard') }}" class="nav-brand">
+                <div class="logo-container">
+                    <div class="logo-icon">Q</div>
+                    <span class="logo-text">QuizPro</span>
+                </div>
+            </a>
+            
+            <div class="nav-links">
+                <a href="{{ url_for('quiz.dashboard') }}" class="nav-link home-link">
+                    <i class="fas fa-home"></i>
+                    <span>Return Home</span>
+                </a>
+                
+                <div class="user-menu">
+                    <button class="user-menu-btn">
+                        <div class="user-avatar-mini">{{ session.username[0] }}</div>
+                        <span class="username">{{ session.username }}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    
+                    <div class="user-dropdown">
+                        <a href="{{ url_for('user.profile') }}" class="dropdown-item">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                        <a href="{{ url_for('auth.logout') }}" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Après la nav et avant project-container -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                        <button class="close-flash">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <div class="project-container">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block scripts %}{% endblock %}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdownButton = document.querySelector('.dropdown-button');
+        const dropdownContent = document.querySelector('.dropdown-content');
+
+        dropdownButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownContent.classList.toggle('show');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!dropdownContent.contains(e.target)) {
+                dropdownContent.classList.remove('show');
+            }
+        });
+
+        // Gestion des messages flash
+        const closeButtons = document.querySelectorAll('.close-flash');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const flashMessage = this.parentElement;
+                flashMessage.style.opacity = '0';
+                setTimeout(() => {
+                    flashMessage.remove();
+                }, 300);
+            });
+        });
+
+        // Auto-hide des messages flash après 5 secondes
+        setTimeout(() => {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(message => {
+                message.style.opacity = '0';
+                setTimeout(() => {
+                    message.remove();
+                }, 300);
+            });
+        }, 5000);
+    });
+    </script>
+
+    <!-- Ajoutez avant la fermeture de </body> -->
+    <script>
+    // Fonction pour gérer le thème
+    function handleTheme() {
+        const themeSelect = document.getElementById('theme');
+        if (themeSelect) {
+            // Appliquer le thème initial
+            document.documentElement.setAttribute('data-theme', themeSelect.value);
+
+            // Écouter les changements
+            themeSelect.addEventListener('change', function() {
+                const theme = this.value;
+                document.documentElement.setAttribute('data-theme', theme);
+                
+                // Sauvegarder la préférence
+                fetch('/user/update_theme', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ theme: theme })
+                });
+            });
+        }
+    }
+
+    // Appliquer le thème au chargement
+    document.addEventListener('DOMContentLoaded', function() {
+        handleTheme();
+    });
+    </script>
+</body>
+</html> 

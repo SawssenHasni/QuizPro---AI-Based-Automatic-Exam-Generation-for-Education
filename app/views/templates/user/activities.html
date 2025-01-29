@@ -1,0 +1,146 @@
+{% extends "project_base.html" %}
+
+{% block title %}Activity History - {{ session.username }}{% endblock %}
+
+{% block additional_css %}
+<style>
+    .activities-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .activities-header {
+        margin-bottom: 2rem;
+    }
+
+    .activities-header h1 {
+        font-size: 2rem;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .activities-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .activity-card {
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-md);
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-md);
+        background: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .activity-content {
+        flex-grow: 1;
+    }
+
+    .activity-type {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .activity-details {
+        color: var(--text-light);
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .activity-timestamp {
+        color: var(--text-light);
+        font-size: 0.75rem;
+    }
+
+    .no-activities {
+        text-align: center;
+        padding: 3rem;
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        color: var(--text-light);
+    }
+
+    .activity-icon.question {
+        background: var(--primary);
+    }
+
+    .activity-icon.exam {
+        background: var(--success);
+    }
+
+    .activity-icon.login {
+        background: var(--warning);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="activities-container">
+    <div class="activities-header">
+        <h1>Activity History</h1>
+        <p>Track your recent activities and interactions</p>
+    </div>
+
+    <div class="activities-list">
+        {% if activities %}
+            {% for activity in activities %}
+                <div class="activity-card">
+                    <div class="activity-icon {{ activity.type }}">
+                        {% if activity.type == 'question' %}
+                            <i class="fas fa-question"></i>
+                        {% elif activity.type == 'exam' %}
+                            <i class="fas fa-file-alt"></i>
+                        {% elif activity.type == 'login' %}
+                            <i class="fas fa-sign-in-alt"></i>
+                        {% else %}
+                            <i class="fas fa-circle"></i>
+                        {% endif %}
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-type">
+                            {% if activity.type == 'question' %}
+                                Question Generated
+                            {% elif activity.type == 'exam' %}
+                                Exam Generated
+                            {% elif activity.type == 'login' %}
+                                Account Login
+                            {% else %}
+                                {{ activity.type|title }}
+                            {% endif %}
+                        </div>
+                        <div class="activity-details">
+                            {{ activity.details }}
+                        </div>
+                        <div class="activity-timestamp">
+                            {{ activity.timestamp|format_datetime }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-activities">
+                <i class="fas fa-history fa-3x mb-3"></i>
+                <h3>No Activities Yet</h3>
+                <p>Your recent activities will appear here</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

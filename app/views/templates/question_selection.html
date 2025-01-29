@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizPro - AI-Powered Quiz Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_home.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <div class="logo-icon">Q</div>
+                <span class="logo-text">QuizPro</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#pricing" class="nav-link">Pricing</a>
+                <a href="#faq" class="nav-link">FAQ</a>
+                {% if session.username %}
+                    <a href="{{ url_for('quiz.dashboard') }}" class="button">Dashboard</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="button">Get Started</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="main-content">
+        <div class="question-container">
+            <h1 class="title">Generate Professional Quizzes with AI</h1>
+            <p class="subtitle">Create custom quizzes and exams in seconds using advanced AI technology</p>
+            <div id="questionType"></div>
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            {% if session.username %}
+                <a href="{{ url_for('quiz.dashboard') }}" class="button">Go to Dashboard</a>
+            {% else %}
+                <a href="{{ url_for('auth.register') }}" class="button">Start Creating</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Features</h2>
+                <p>Discover what makes QuizPro the perfect choice for your exam preparation</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI-Powered Questions</h3>
+                    <p>Generate unique and relevant questions using advanced AI technology</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Custom Exams</h3>
+                    <p>Create personalized exams tailored to your specific needs</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Time-Saving</h3>
+                    <p>Generate comprehensive exams in minutes, not hours</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Progress Tracking</h3>
+                    <p>Monitor your performance and track improvement over time</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Pricing Plans</h2>
+                <p>Choose the perfect plan for your needs</p>
+            </div>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Free</h3>
+                        <div class="price">$0<span>/month</span></div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> 10 Questions/Day</li>
+                            <li><i class="fas fa-check"></i> Basic Question Types</li>
+                            <li><i class="fas fa-check"></i> Community Support</li>
+                            <li class="disabled"><i class="fas fa-times"></i> Custom Exams</li>
+                            <li class="disabled"><i class="fas fa-times"></i> Priority Support</li>
+                        </ul>
+                    </div>
+                    <a href="{{ url_for('auth.register') }}" class="button button-outline">Get Started</a>
+                </div>
+                
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3>Pro</h3>
+                        <div class="price">$19<span>/month</span></div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> Unlimited Questions</li>
+                            <li><i class="fas fa-check"></i> All Question Types</li>
+                            <li><i class="fas fa-check"></i> Custom Exams</li>
+                            <li><i class="fas fa-check"></i> Advanced Analytics</li>
+                            <li><i class="fas fa-check"></i> Priority Support</li>
+                        </ul>
+                    </div>
+                    <a href="{{ url_for('auth.register') }}" class="button button-primary">Start Free Trial</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Enterprise</h3>
+                        <div class="price">Custom</div>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> Everything in Pro</li>
+                            <li><i class="fas fa-check"></i> Custom Integration</li>
+                            <li><i class="fas fa-check"></i> Dedicated Support</li>
+                            <li><i class="fas fa-check"></i> Team Management</li>
+                            <li><i class="fas fa-check"></i> Custom Features</li>
+                        </ul>
+                    </div>
+                    <a href="mailto:contact@quizpro.com" class="button button-outline">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section">
+        <div class="faq-container">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+                <p>Find answers to common questions about QuizPro</p>
+            </div>
+            <div class="faq-item">
+                <h3 class="faq-question">How does the AI question generation work?</h3>
+                <p class="faq-answer">Our AI technology analyzes your input and generates relevant, high-quality questions based on the specified topic and difficulty level.</p>
+            </div>
+            <div class="faq-item">
+                <h3 class="faq-question">Can I customize the generated questions?</h3>
+                <p class="faq-answer">Yes, you can edit, modify, or refine any generated question to better suit your needs.</p>
+            </div>
+            <div class="faq-item">
+                <h3 class="faq-question">Is there a limit to the number of questions I can generate?</h3>
+                <p class="faq-answer">Free users can generate up to 10 questions per day. Pro users have unlimited access to question generation.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="logo">
+                <div class="logo-icon">Q</div>
+                <span class="logo-text" style="color: white;">QuizPro</span>
+            </div>
+            <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#faq">FAQ</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Animation pour le type de question
+        const questionTypes = [
+            "Multiple Choice Questions (MCQ)",
+            "True - False ",
+            "Open Ended",
+            "Fill in the Blanks"
+        ];
+
+        let currentIndex = 0;
+        const questionTypeElement = document.getElementById('questionType');
+        const progressBar = document.querySelector('.progress');
+
+        function updateQuestionType() {
+            questionTypeElement.classList.remove('visible');
+            
+            setTimeout(() => {
+                questionTypeElement.textContent = questionTypes[currentIndex];
+                questionTypeElement.classList.add('visible');
+                
+                // Update progress bar
+                const progress = ((currentIndex + 1) / questionTypes.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                
+                currentIndex = (currentIndex + 1) % questionTypes.length;
+            }, 500);
+        }
+
+        // Initial call
+        updateQuestionType();
+        // Set interval for rotation
+        setInterval(updateQuestionType, 3000);
+    </script>
+</body>
+</html>

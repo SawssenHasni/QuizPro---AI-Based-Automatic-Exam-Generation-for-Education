@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade to Pro - QuizPro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_project2.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <main class="container">
+        <header class="header">
+            <h1>Upgrade to Pro</h1>
+            <p>Unlock premium features and take your experience to the next level</p>
+        </header>
+
+        <div class="pricing-container">
+            <div class="pricing-card">
+                <div class="plan-header">
+                    <h2>Pro Plan</h2>
+                    <div class="price">
+                        <span class="amount">$9.99</span>
+                        <span class="period">/month</span>
+                    </div>
+                </div>
+                <ul class="features-list">
+                    <li><i class="fas fa-check"></i> Upload files up to 50MB</li>
+                    <li><i class="fas fa-check"></i> Unlimited question generation</li>
+                    <li><i class="fas fa-check"></i> Priority support</li>
+                    <li><i class="fas fa-check"></i> Advanced question types</li>
+                    <li><i class="fas fa-check"></i> Custom branding</li>
+                </ul>
+                <button class="upgrade-btn" onclick="startUpgrade()">
+                    <i class="fas fa-crown"></i> Upgrade Now
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function startUpgrade() {
+            // Ici, vous pouvez ajouter la logique pour démarrer le processus de paiement
+            alert('Payment processing will be implemented here');
+        }
+    </script>
+</body>
+</html> 

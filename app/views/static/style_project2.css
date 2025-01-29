@@ -1,0 +1,510 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* CSS Variables for easy theming */
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #f8fafc;
+    --accent: #0ea5e9;
+    --text: #1e293b;
+    --text-light: #64748b;
+    --background: #e8f1fc;
+    --card-bg: #ffffff;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --footer-bg: #f1f5f9;
+    --border-radius: 1rem;
+    --spacing: 1.5rem;
+    --spacing-sm: 0.75rem;
+    --spacing-md: 1rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--background);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing);
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: var(--spacing);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: calc(var(--spacing) * 2);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    margin: calc(var(--spacing) * -1);
+    margin-bottom: var(--spacing);
+    padding: var(--spacing);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    color: white;
+}
+
+.header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.header p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+}
+
+.form {
+    display: grid;
+    gap: var(--spacing);
+    padding: var(--spacing);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: var(--text);
+}
+
+.form-group input[type="file"], .form-group select, button {
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    background: var(--secondary);
+    color: var(--text);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input[type="file"]:focus, .form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+button {
+    background: var(--primary);
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 9999px;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.back-btn {
+    display: inline-block;
+    background-color: var(--primary);
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 30px;
+    margin-top: 20px;
+    text-align: center;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.back-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+iframe {
+    width: 100%;
+    height: 500px;
+    border: 1px solid #ccc;
+    margin-top: 20px;
+    border-radius: 10px;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: auto;
+    padding: var(--spacing);
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --spacing: 1rem;
+    }
+
+    .container {
+        padding: var(--spacing);
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .form-group input[type="file"], .form-group select, button {
+        font-size: 0.9rem;
+    }
+}
+
+.pdf-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.pdf-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+}
+
+.pdf-viewer {
+    margin-bottom: 1.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: #f8fafc;
+}
+
+.pdf-viewer embed {
+    display: block;
+    border: none;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.download-btn, .new-quiz-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.download-btn {
+    background: var(--primary);
+    color: white;
+}
+
+.new-quiz-btn {
+    background: var(--secondary);
+    color: var(--text);
+}
+
+.download-btn:hover, .new-quiz-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.flash-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.flash-message {
+    padding: 1rem 2rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.3s ease-out;
+}
+
+.flash-message.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border-left: 4px solid #dc2626;
+    padding: 1rem 2rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.flash-message.error .upgrade-link {
+    color: var(--primary);
+    font-weight: 500;
+    text-decoration: none;
+    margin-left: 0.5rem;
+}
+
+.flash-message.error .upgrade-link:hover {
+    text-decoration: underline;
+}
+
+/* Pour permettre le HTML dans les messages flash */
+.flash-message {
+    display: flex;
+    align-items: center;
+}
+
+.flash-message a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.error-message {
+    color: var(--danger);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    display: none;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+.modal-icon {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.modal-icon i {
+    font-size: 3rem;
+    color: var(--warning);
+}
+
+.modal-content h3 {
+    text-align: center;
+    color: var(--text);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.modal-content p {
+    text-align: center;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+.upgrade-info {
+    background: var(--secondary);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.upgrade-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.upgrade-info li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+}
+
+.upgrade-info li i {
+    color: var(--success);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.upgrade-btn {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.upgrade-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.close-modal-btn {
+    background: var(--secondary);
+    color: var(--text);
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.close-modal-btn:hover {
+    background: #e2e8f0;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .modal-content {
+        padding: 1.5rem;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+    }
+
+    .upgrade-btn, .close-modal-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Ajouter ces styles pour la page d'upgrade */
+.pricing-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.pricing-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.plan-header {
+    margin-bottom: 2rem;
+}
+
+.plan-header h2 {
+    color: var(--text);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.price {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.price .amount {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.price .period {
+    color: var(--text-light);
+}
+
+.features-list {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0;
+}
+
+.features-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+    justify-content: center;
+}
+
+.features-list li i {
+    color: var(--success);
+}

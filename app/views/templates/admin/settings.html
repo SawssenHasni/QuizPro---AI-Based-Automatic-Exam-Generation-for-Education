@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Settings - QuizPro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_admin.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="page-wrapper">
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">Q</div>
+                <span class="logo-text">QuizPro</span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('admin.stats') }}" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Users Management</span>
+                </a>
+                <a href="{{ url_for('admin.settings') }}" class="nav-item active">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                <div class="nav-separator"></div>
+                <a href="{{ url_for('quiz.dashboard') }}" class="nav-item">
+                    <i class="fas fa-house"></i>
+                    <span>Return Home</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="header-section">
+                <div class="header-content">
+                    <h1>Admin Settings</h1>
+                    <p>Configure system settings and preferences</p>
+                </div>
+            </div>
+
+            <div class="settings-grid">
+                <!-- General Settings -->
+                <div class="settings-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-sliders-h"></i> General Settings</h2>
+                    </div>
+                    <div class="card-body">
+                        <form class="settings-form" method="POST">
+                            <div class="form-group">
+                                <label for="site_name">Site Name</label>
+                                <input type="text" id="site_name" name="site_name" value="QuizPro" class="input">
+                            </div>
+                            <div class="form-group">
+                                <label for="admin_email">Admin Email</label>
+                                <input type="email" id="admin_email" name="admin_email" value="{{ admin_email }}" class="input">
+                            </div>
+                            <div class="form-group">
+                                <label for="maintenance_mode">Maintenance Mode</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="maintenance_mode" name="maintenance_mode">
+                                    <label for="maintenance_mode"></label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="settings-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-shield-alt"></i> Security Settings</h2>
+                    </div>
+                    <div class="card-body">
+                        <form class="settings-form" method="POST">
+                            <div class="form-group">
+                                <label for="min_password_length">Minimum Password Length</label>
+                                <input type="number" id="min_password_length" name="min_password_length" value="8" min="6" max="32" class="input">
+                            </div>
+                            <div class="form-group">
+                                <label for="session_timeout">Session Timeout (minutes)</label>
+                                <input type="number" id="session_timeout" name="session_timeout" value="30" min="5" class="input">
+                            </div>
+                            <div class="form-group">
+                                <label for="max_login_attempts">Max Login Attempts</label>
+                                <input type="number" id="max_login_attempts" name="max_login_attempts" value="5" min="1" class="input">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Email Settings -->
+                <div class="settings-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-envelope"></i> Email Settings</h2>
+                    </div>
+                    <div class="card-body">
+                        <form class="settings-form" method="POST">
+                            <div class="form-group">
+                                <label for="smtp_host">SMTP Host</label>
+                                <input type="text" id="smtp_host" name="smtp_host" class="input">
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp_port">SMTP Port</label>
+                                <input type="number" id="smtp_port" name="smtp_port" class="input">
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp_user">SMTP Username</label>
+                                <input type="text" id="smtp_user" name="smtp_user" class="input">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-actions">
+                <button type="submit" class="button button-primary">
+                    <i class="fas fa-save"></i>
+                    Save Changes
+                </button>
+                <button type="reset" class="button button-secondary">
+                    <i class="fas fa-undo"></i>
+                    Reset
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Gestionnaire pour le formulaire
+        document.querySelectorAll('.settings-form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(form);
+                try {
+                    const response = await fetch('/admin/settings', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Settings saved successfully');
+                    } else {
+                        alert('Error saving settings: ' + data.message);
+                    }
+                } catch (error) {
+                    alert('Error saving settings: ' + error.message);
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

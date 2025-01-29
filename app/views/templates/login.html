@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - QuizPro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="page-container">
+        <!-- Logo Section -->
+        <div class="logo-container">
+            <div class="logo">
+                <div class="logo-icon">Q</div>
+                <span class="logo-text">QuizPro</span>
+            </div>
+        </div>
+
+        <!-- Welcome Message -->
+        <div class="welcome-message">
+            <h1>Welcome Back!</h1>
+            <p>Please login to your account</p>
+        </div>
+
+        <!-- Login Container -->
+        <div class="login-container">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Login Form -->
+            <form method="POST" class="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            placeholder="Enter your username"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-input-container">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required
+                            placeholder="Enter your password"
+                        >
+                        <button 
+                            type="button" 
+                            class="toggle-password" 
+                            onclick="togglePassword('password')"
+                            tabindex="-1">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-button">
+                    <span>Login</span>
+                </button>
+            </form>
+
+            <div class="register-link">
+                <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const button = passwordInput.parentElement.querySelector('.toggle-password');
+            const icon = button.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

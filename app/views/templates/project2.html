@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Professional question generator tool for educators and content creators">
+    <title>Generate Questions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_project2.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <main class="container">
+        <header class="header">
+            <h1>Exam Generator</h1>
+            <p>Transform your content into engaging questions using AI technology</p>
+        </header>
+
+        {% if not pdf_generated %}
+        <form method="POST" enctype="multipart/form-data" class="form" onsubmit="return validateFileSize()">
+            <div class="form-group">
+                <label for="pdf_file">Upload PDF File:</label>
+                <input type="file" id="pdf_file" name="pdf_file" accept=".pdf" required onchange="checkFileSize(this)">
+                <div id="file-error" class="error-message" style="display: none; color: var(--danger); margin-top: 0.5rem;"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="num_questions">Number of Questions:</label>
+                <select id="num_questions" name="num_questions">
+                    {% for i in range(1, 11) %}
+                        <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="difficulty">Difficulty:</label>
+                <select id="difficulty" name="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="question_type">Question Type:</label>
+                <select id="question_type" name="question_type">
+                    <option value="mcq">Multiple Choice (MCQ)</option>
+                    <option value="truefalse">True/False</option>
+                    <option value="openended">Open Ended</option>
+                    <option value="fillintheblanks">Fill in the Blanks</option>
+                </select>
+            </div>
+
+            <button type="submit" class="button">
+                <i class="fas fa-magic"></i> Generate Exam
+            </button>
+        </form>
+        {% endif %}
+
+        {% if pdf_generated %}
+        <div class="pdf-container">
+            <div class="pdf-viewer">
+                <embed 
+                    src="{{ pdf_url }}"
+                    type="application/pdf"
+                    width="100%"
+                    height="600px"
+                />
+            </div>
+            <div class="button-group">
+                <a href="{{ download_url }}" class="download-btn">
+                    <i class="fas fa-download"></i> Download PDF
+                </a>
+                <a href="{{ url_for('quiz.project2') }}" class="new-quiz-btn">
+                    <i class="fas fa-plus"></i> Generate New Quiz
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <a href="{{ url_for('quiz.project1') }}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Question Generator
+        </a>
+    </main>
+
+    <footer class="footer">
+        <p>© 2024 QuizPro. All rights reserved.</p>
+    </footer>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message | safe }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div id="sizeErrorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3>File Size Limit Reached</h3>
+            <p>Free users are limited to 1MB file uploads.</p>
+            <div class="upgrade-info">
+                <p>Upgrade to Pro for:</p>
+                <ul>
+                    <li><i class="fas fa-check"></i> Upload files up to 50MB</li>
+                    <li><i class="fas fa-check"></i> Unlimited question generation</li>
+                    <li><i class="fas fa-check"></i> Priority support</li>
+                </ul>
+            </div>
+            <div class="modal-actions">
+                <a href="{{ url_for('user.upgrade') }}" class="upgrade-btn">
+                    <i class="fas fa-crown"></i> Upgrade to Pro
+                </a>
+                <button class="close-modal-btn">
+                    Maybe Later
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkFileSize(input) {
+            const fileError = document.getElementById('file-error');
+            const submitButton = document.querySelector('button[type="submit"]');
+            const modal = document.getElementById('sizeErrorModal');
+            
+            if (input.files && input.files[0]) {
+                const maxSize = 1048576; // 1MB
+                
+                if (input.files[0].size > maxSize) {
+                    modal.style.display = 'flex';
+                    submitButton.disabled = true;
+                    input.value = ''; // Clear the file input
+                } else {
+                    fileError.style.display = 'none';
+                    submitButton.disabled = false;
+                }
+            }
+        }
+
+        // Fermer la modal avec le bouton "Maybe Later"
+        document.querySelector('.close-modal-btn').addEventListener('click', function() {
+            document.getElementById('sizeErrorModal').style.display = 'none';
+        });
+
+        // Fermer la modal en cliquant en dehors
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('sizeErrorModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

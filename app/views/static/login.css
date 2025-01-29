@@ -1,0 +1,229 @@
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #f8fafc;
+    --accent: #0ea5e9;
+    --text: #1e293b;
+    --text-light: #64748b;
+    --background: #e8f1fc;
+    --card-bg: #ffffff;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --border-radius: 1rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--background);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.page-container {
+    width: 100%;
+    max-width: 480px;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+/* Logo styles */
+.logo-container {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--primary);
+    color: white;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* Welcome message */
+.welcome-message {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.welcome-message h1 {
+    font-size: 1.5rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.welcome-message p {
+    color: var(--text-light);
+}
+
+/* Login form */
+.login-form {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper input,
+.password-input-container input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.input-wrapper input:focus,
+.password-input-container input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    outline: none;
+}
+
+/* Password input container */
+.password-input-container {
+    position: relative;
+    width: 100%;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.toggle-password:hover {
+    color: var(--primary);
+}
+
+.toggle-password i {
+    font-size: 1.1rem;
+}
+
+/* Login button */
+.login-button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.login-button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+/* Register link */
+.register-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+.register-link a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+/* Flash messages */
+.flash-message {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+}
+
+.flash-message.success {
+    background-color: #dcfce7;
+    color: var(--success);
+}
+
+.flash-message.error {
+    background-color: #fee2e2;
+    color: var(--danger);
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+    .page-container {
+        padding: 1.5rem;
+    }
+
+    .welcome-message h1 {
+        font-size: 1.25rem;
+    }
+
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1.25rem;
+    }
+
+    .logo-text {
+        font-size: 1.25rem;
+    }
+} 

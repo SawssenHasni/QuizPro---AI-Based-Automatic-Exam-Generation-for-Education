@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - QuizPro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="page-container">
+        <!-- Logo Section -->
+        <div class="logo-container">
+            <div class="logo">
+                <div class="logo-icon">Q</div>
+                <span class="logo-text">QuizPro</span>
+            </div>
+        </div>
+
+        <!-- Welcome Message -->
+        <div class="welcome-message">
+            <h1>Create Account</h1>
+            <p>Join our community today!</p>
+        </div>
+
+        <!-- Register Container -->
+        <div class="register-container">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Register Form -->
+            <form method="POST" class="register-form" onsubmit="return validateForm()">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            placeholder="Choose a username"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="Enter your email"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-input-container">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required 
+                            class="form-control"
+                            pattern=".{8,}"
+                            title="Password must be at least 8 characters long"
+                            placeholder="Enter your password"
+                            oninput="checkPasswordStrength()"
+                        >
+                        <button 
+                            type="button" 
+                            class="toggle-password" 
+                            onclick="togglePassword('password')"
+                            tabindex="-1">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <div class="password-input-container">
+                        <input 
+                            type="password" 
+                            id="confirm_password" 
+                            name="confirm_password" 
+                            required
+                            placeholder="Confirm your password"
+                        >
+                        <button 
+                            type="button" 
+                            class="toggle-password" 
+                            onclick="togglePassword('confirm_password')"
+                            tabindex="-1">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="password-strength">
+                    <div class="strength-bars">
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                        <div class="strength-bar"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="register-button">
+                    <span>Create Account</span>
+                </button>
+            </form>
+
+            <div class="login-link">
+                <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const button = passwordInput.parentElement.querySelector('.toggle-password');
+            const icon = button.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBars = document.querySelectorAll('.strength-bar');
+            
+            // Reset all bars
+            strengthBars.forEach(bar => {
+                bar.className = 'strength-bar';
+            });
+
+            if (password.length === 0) {
+                return;
+            }
+
+            let strength = 0;
+            
+            // Check length
+            if (password.length >= 8) strength++;
+            // Check lowercase
+            if (/[a-z]/.test(password)) strength++;
+            // Check uppercase and numbers
+            if (/[A-Z]/.test(password) && /[0-9]/.test(password)) strength++;
+            // Check special characters
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength++;
+
+            const strengthClasses = ['weak', 'medium', 'strong', 'very-strong'];
+
+            // Colorer les barres selon la force
+            for (let i = 0; i < strength; i++) {
+                strengthBars[i].classList.add(strengthClasses[strength - 1]);
+            }
+        }
+
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return false;
+            }
+
+            if (password.length < 8) {
+                alert('Password must be at least 8 characters long!');
+                return false;
+            }
+
+            const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+            if (!passwordRegex.test(password)) {
+                alert('Password must include uppercase, lowercase, number, and special character!');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</body>
+</html>
