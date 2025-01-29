@@ -3,9 +3,9 @@
 ## 📝 Description
 QuizPro is an intelligent educational platform developed as part of my Master's final project. It leverages AI to automatically generate questions from textual content, enhancing the learning experience. It offers two main features:
 
-## **Question Generator: Transforms any text into relevant questions.**
+**Question Generator: Transforms any text into relevant questions.**
 
-## **Exam Generator: Creates complete exams with different types of questions.**
+**Exam Generator: Creates complete exams with different types of questions.**
 
 ---
 
